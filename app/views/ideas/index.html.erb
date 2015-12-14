@@ -1,0 +1,31 @@
+<h1>Ideas Everywhere!</h1>
+<% @idea.each do |idea| %>
+  <div class="well">
+    <%= link_to idea.title, idea_path(idea) %>
+    <div class="float_right">
+      Members: <%= idea.joins.count %>
+      Liked: <%= pluralize(idea.likes.count, "time") %>
+    </div>
+      <div class="like_join_button">
+      <% unless can? :manage, idea %>
+        <% if user_signed_in? && idea.liked_by?(current_user) %>
+          <%= link_to "Un-Like", idea_like_path(idea, idea.like_for(current_user)),
+                            method: :delete, class: "btn btn-danger btn-sm" %>
+        <% else %>
+          <%= link_to "Like", idea_likes_path(idea), class: "btn btn-primary btn-sm",
+                              method: :post %>
+        <% end %>
+      <% end %>
+
+      <% unless can? :manage, idea %>
+        <% if user_signed_in? && idea.joined_by?(current_user) %>
+          <%= link_to "Un-Join", idea_join_path(idea, idea.join_for(current_user)),
+                            method: :delete, class: "btn btn-danger btn-sm" %>
+        <% else %>
+          <%= link_to "Join", idea_joins_path(idea), class: "btn btn-primary btn-sm",
+                              method: :post %>
+        <% end %>
+      <% end %>
+      </div>
+  </div>
+<% end %>
